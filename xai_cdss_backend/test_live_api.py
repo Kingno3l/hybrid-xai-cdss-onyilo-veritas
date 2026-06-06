@@ -3,7 +3,7 @@ import requests
 import random
 
 # API endpoint
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "https://kingno3l-hybrid-xai-cdss-backend.hf.space/predict"
 
 # Locate test images
 pneumonia_dir = "dataset/test/PNEUMONIA"
