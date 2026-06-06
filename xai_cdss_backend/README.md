@@ -229,19 +229,18 @@ else:
 
 ## Notes for Thesis
 
-- Model is fully explainable via Grad-CAM.
-- Decision logic conservatively handles low-confidence predictions.
+- Model is fully explainable via Grad-CAM (Gradient-weighted Class Activation Mapping) and Intrinsic Feature Maps.
+- Decision logic conservatively handles predictions with balanced classification thresholds.
 - Backend is API-ready for frontend integration.
 - Suitable for academic evaluation and demonstration.
 
-**Author:** Onyilo
-**Date:** December 2025
-
-```
-
 ---
 
-If you want, I can also create a **full thesis-ready README** for **frontend + backend combined**, showing the **entire workflow with diagrams**, which would make your submission look very professional.
+## Deployment Configuration
 
-Do you want me to do that next?
-```
+- **Backend**: Containerized and hosted on Hugging Face Spaces (CPU Basic, 16GB RAM).
+- **Frontend**: Hosted on Vercel.
+- **Sync Pipeline**: Automated deployment triggered via GitHub Actions (`deploy_hf.yml`) on pushing to the `main` branch. Git Large File Storage (LFS) is automatically managed by the actions runner to handle model weights.
+
+**Author:** Onyilo
+**MSc Thesis Repository**
