@@ -202,6 +202,8 @@ import ExplainabilitySection from "../components/ExplainabilitySection";
 import ModelMetrics from "../components/ModelMetrics";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 
+const API_BASE_URL = "https://kingno3l-hybrid-xai-cdss-backend.hf.space";
+
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState(null);
@@ -213,7 +215,7 @@ const Index = () => {
   useEffect(() => {
     const fetchModelMetrics = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/model/metrics");
+        const response = await fetch(`${API_BASE_URL}/model/metrics`);
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         if (data.error) throw new Error(data.error);
@@ -253,7 +255,7 @@ const Index = () => {
       formData.append("file", file);
 
       // 2. Call the API
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
         body: formData,
       });
