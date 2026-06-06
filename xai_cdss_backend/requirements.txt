@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+torch
+torchvision
+pillow
+opencv-python-headless==4.8.0.76
+matplotlib
+numpy
+captum
+python-multipart
+scikit-learn
+
+

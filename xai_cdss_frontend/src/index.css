@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* Medical CDSS Design System */
+
+@layer base {
+  :root {
+    /* Medical blue palette */
+    --background: 210 25% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary medical blue */
+    --primary: 210 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 210 100% 95%;
+
+    /* Secondary soft gray */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 25% 25%;
+
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 15% 50%;
+
+    --accent: 210 80% 92%;
+    --accent-foreground: 210 100% 35%;
+
+    /* Diagnostic colors */
+    --success: 145 65% 42%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 145 60% 94%;
+    
+    --warning: 35 95% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 35 90% 94%;
+    
+    --danger: 0 75% 55%;
+    --danger-foreground: 0 0% 100%;
+    --danger-light: 0 70% 95%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 210 100% 40%;
+
+    --radius: 0.75rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 15% / 0.08), 0 2px 4px -2px hsl(215 25% 15% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 15% / 0.08), 0 4px 6px -4px hsl(215 25% 15% / 0.05);
+    --shadow-card: 0 1px 3px hsl(215 25% 15% / 0.06), 0 4px 12px hsl(215 25% 15% / 0.04);
+  }
+
+  .dark {
+    --background: 215 30% 10%;
+    --foreground: 210 20% 95%;
+
+    --card: 215 25% 14%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 215 25% 14%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 210 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 210 80% 20%;
+
+    --secondary: 215 20% 20%;
+    --secondary-foreground: 210 20% 90%;
+
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 15% 60%;
+
+    --accent: 210 60% 25%;
+    --accent-foreground: 210 100% 70%;
+
+    --success: 145 60% 50%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 145 40% 18%;
+
+    --warning: 35 90% 55%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 35 60% 18%;
+
+    --danger: 0 70% 60%;
+    --danger-foreground: 0 0% 100%;
+    --danger-light: 0 50% 18%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 210 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'DM Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  .medical-gradient {
+    background: linear-gradient(135deg, hsl(210 100% 40%) 0%, hsl(200 100% 45%) 100%);
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-medical {
+    box-shadow: 0 4px 20px hsl(210 100% 40% / 0.12);
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

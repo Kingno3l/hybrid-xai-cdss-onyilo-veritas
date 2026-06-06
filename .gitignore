@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+xai_cdss_frontend/node_modules/
+
+# Python Virtual Environments & Cache
+venv/
+venv_mac/
+xai_cdss_backend/venv_mac/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Backups & Temporary files
+*backup*
+*backeup*
+xai_cdss_backend - backeup/
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
