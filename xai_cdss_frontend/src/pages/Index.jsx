@@ -305,22 +305,65 @@ const Index = () => {
           </div>
         )}
 
-        {/* VIEW 1: UPLOAD CARD (Shown when no results) */}
+        {/* VIEW 1: UPLOAD CARD & CLINICAL INTRO GRID (Shown when no results) */}
         {!results && !isLoading && (
-          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                AI-Powered Pneumonia Detection
-              </h2>
-              <p className="text-muted-foreground">
-                Upload a chest X-ray image to receive an AI-assisted diagnosis.
-              </p>
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Split Screen Grid */}
+            <div className="grid lg:grid-cols-12 gap-8 max-w-6xl mx-auto items-stretch">
+              
+              {/* Left Column: Medical Practitioner Banner & Lab Details */}
+              <div className="lg:col-span-5 flex flex-col justify-between bg-card border border-border rounded-2xl overflow-hidden shadow-lg relative group">
+                {/* Background Image of Black Practitioners */}
+                <div className="relative h-64 lg:h-full min-h-[320px] w-full">
+                  <img 
+                    src="/medical_banner.png" 
+                    alt="Clinical Radiologists Analyzing Chest X-Ray" 
+                    className="absolute inset-0 w-full h-full object-cover brightness-[0.85] contrast-[1.05]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+                  
+                  {/* Overlay text on image */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <span className="px-3 py-1 text-xs font-bold bg-blue-600 text-white rounded-full uppercase tracking-wider shadow-md inline-block mb-3">
+                      Clinical Imaging Unit
+                    </span>
+                    <h3 className="text-xl font-bold tracking-tight text-white mb-2">
+                      Onyilo Veritas Diagnostics Lab
+                    </h3>
+                    <p className="text-sm text-slate-200 leading-relaxed">
+                      Assisting radiologists and clinicians with deep learning analysis for rapid diagnosis of thoracic pathology.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Title, Upload Card, and CDSS Controls */}
+              <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-3.5 w-3.5 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                      Diagnostic System Online
+                    </span>
+                  </div>
+                  
+                  <h2 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
+                    Chest Radiography Interpretation Engine
+                  </h2>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                    Upload a high-resolution Chest X-ray scan. The system will automatically diagnose pathological patterns and display visual Grad-CAM overlays to support diagnostic decisions.
+                  </p>
+                </div>
+
+                <UploadCard onAnalyze={handleAnalyze} isLoading={isLoading} />
+              </div>
             </div>
 
-            <UploadCard onAnalyze={handleAnalyze} isLoading={isLoading} />
-
             {metrics && (
-              <div className="max-w-4xl mx-auto">
+              <div className="max-w-6xl mx-auto">
                 <ModelMetrics metrics={metrics} />
               </div>
             )}
