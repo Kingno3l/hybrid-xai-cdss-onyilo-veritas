@@ -318,7 +318,7 @@ const Index = () => {
                 {/* Background Image of Black Practitioners */}
                 <div className="relative h-64 lg:h-full min-h-[320px] w-full">
                   <img 
-                    src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80" 
+                    src="/medical_banner.png" 
                     alt="Clinical Radiologists Analyzing Chest X-Ray" 
                     className="absolute inset-0 w-full h-full object-cover brightness-[0.85] contrast-[1.05]"
                   />

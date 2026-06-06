@@ -1,6 +1,11 @@
+# Only track large model weights via LFS — NOT frontend public assets or images
 *.pth filter=lfs diff=lfs merge=lfs -text
 xai_cdss_backend/model_weights.pth filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.jpeg filter=lfs diff=lfs merge=lfs -text
+
+# Track large thesis plots via LFS (backend only, not needed by Vercel)
+xai_cdss_backend/thesis_plots/*.png filter=lfs diff=lfs merge=lfs -text
+xai_cdss_backend/thesis_plots/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+xai_cdss_backend/thesis_plots/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+
+# Binary lock files
 *.lockb filter=lfs diff=lfs merge=lfs -text
