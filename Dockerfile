@@ -9,11 +9,11 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy requirements first to leverage Docker cache
-COPY requirements.txt .
+COPY xai_cdss_backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all application code
-COPY . .
+# Copy all backend application code
+COPY xai_cdss_backend/ .
 
 # Hugging Face Spaces runs apps on port 7860 by default
 EXPOSE 7860
