@@ -1,6 +1,3 @@
-Absolutely, Onyilo . Here’s your **ready-to-copy `README.md`** file for the backend:
-
-````markdown
 # Hybrid Explainable AI Clinical Decision Support System (XAI-CDSS) - Backend
 
 **Version:** 1.0  

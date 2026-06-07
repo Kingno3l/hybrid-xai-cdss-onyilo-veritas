@@ -1,198 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import Header from '../components/Header';
-// import UploadCard from '../components/UploadCard';
-// import LoadingState from '../components/LoadingState';
-// import DiagnosisResult from '../components/DiagnosisResult';
-// import ExplainabilitySection from '../components/ExplainabilitySection';
-// import ModelMetrics from '../components/ModelMetrics';
-// import { ArrowLeft, RefreshCw } from 'lucide-react';
-
-// const API_BASE_URL = 'http://127.0.0.1:8000';
-
-// const Index = () => {
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [results, setResults] = useState(null);
-//   const [metrics, setMetrics] = useState(null);
-//   const [originalImage, setOriginalImage] = useState(null);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     // Fetch model metrics on component mount
-//     fetchModelMetrics();
-//   }, []);
-
-//   const fetchModelMetrics = async () => {
-//     try {
-//       const response = await axios.get(`${API_BASE_URL}/model/metrics`);
-//       setMetrics(response.data);
-//     } catch (err) {
-//       console.log('Could not fetch model metrics:', err.message);
-//       // Use mock metrics for demo if backend is unavailable
-//       setMetrics({
-//         accuracy: 0.924,
-//         precision: 0.918,
-//         recall: 0.931,
-//         auc: 0.956,
-//         inference_time: 127
-//       });
-//     }
-//   };
-
-//   const handleAnalyze = async (file) => {
-//     setIsLoading(true);
-//     setError(null);
-
-//     // Store original image for comparison
-//     const reader = new FileReader();
-//     reader.onload = () => setOriginalImage(reader.result);
-//     reader.readAsDataURL(file);
-
-//     try {
-//       const formData = new FormData();
-//       formData.append('file', file);
-
-//       const response = await axios.post(`${API_BASE_URL}/predict`, formData, {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//         },
-//       });
-
-//       setResults(response.data);
-//     } catch (err) {
-//       console.error('Prediction error:', err);
-
-//       // Demo mode: show mock results if backend is unavailable
-//       if (err.code === 'ERR_NETWORK') {
-//         setResults({
-//           prediction: Math.random() > 0.5 ? 'Pneumonia' : 'Normal',
-//           confidence: 0.85 + Math.random() * 0.12,
-//           gradcam_image: originalImage,
-//           feature_maps: [originalImage, originalImage, originalImage, originalImage]
-//         });
-//         setError('Demo mode: Backend unavailable. Showing simulated results.');
-//       } else {
-//         setError(err.response?.data?.message || 'An error occurred during analysis. Please try again.');
-//       }
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const handleReset = () => {
-//     setResults(null);
-//     setOriginalImage(null);
-//     setError(null);
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       <Header />
-
-//       <main className="container mx-auto px-4 py-8 md:py-12">
-//         {/* Error Banner */}
-//         {error && (
-//           <div className="max-w-2xl mx-auto mb-6 p-4 rounded-xl bg-warning-light border border-warning/30 text-center">
-//             <p className="text-sm text-warning">{error}</p>
-//           </div>
-//         )}
-
-//         {/* Main Content */}
-//         {!results && !isLoading && (
-//           <div className="space-y-12">
-//             {/* Hero Section */}
-//             <div className="text-center max-w-2xl mx-auto">
-//               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-//                 AI-Powered Pneumonia Detection
-//               </h2>
-//               <p className="text-muted-foreground">
-//                 Upload a chest X-ray image to receive an AI-assisted diagnosis with
-//                 explainable visualizations that highlight the reasoning behind the model's decision.
-//               </p>
-//             </div>
-
-//             {/* Upload Section */}
-//             <UploadCard onAnalyze={handleAnalyze} isLoading={isLoading} />
-
-//             {/* Model Metrics Section */}
-//             {metrics && (
-//               <div className="max-w-4xl mx-auto">
-//                 <ModelMetrics metrics={metrics} />
-//               </div>
-//             )}
-//           </div>
-//         )}
-
-//         {/* Loading State */}
-//         {isLoading && <LoadingState />}
-
-//         {/* Results View */}
-//         {results && !isLoading && (
-//           <div className="space-y-6">
-//             {/* Back Button */}
-//             <div className="max-w-4xl mx-auto">
-//               <button
-//                 onClick={handleReset}
-//                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors"
-//               >
-//                 <ArrowLeft className="w-4 h-4" />
-//                 <span className="font-medium">New Analysis</span>
-//               </button>
-//             </div>
-
-//             {/* Results Grid */}
-//             <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-//               {/* Diagnosis Result */}
-//               <DiagnosisResult
-//                 prediction={results.prediction}
-//                 confidence={results.confidence}
-//               />
-
-//               {/* Explainability */}
-//               <div className="md:col-span-2">
-//                 <ExplainabilitySection
-//                   gradcamImage={results.gradcam_image}
-//                   featureMaps={results.feature_maps}
-//                   originalImage={originalImage}
-//                 />
-//               </div>
-
-//               {/* Model Metrics */}
-//               {metrics && (
-//                 <div className="md:col-span-2">
-//                   <ModelMetrics metrics={metrics} />
-//                 </div>
-//               )}
-//             </div>
-
-//             {/* Analyze Another Button */}
-//             <div className="max-w-4xl mx-auto text-center pt-6">
-//               <button
-//                 onClick={handleReset}
-//                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl medical-gradient text-primary-foreground font-semibold shadow-medical hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
-//               >
-//                 <RefreshCw className="w-5 h-5" />
-//                 Analyze Another X-ray
-//               </button>
-//             </div>
-//           </div>
-//         )}
-//       </main>
-
-//       {/* Footer */}
-//       <footer className="border-t border-border bg-card mt-12">
-//         <div className="container mx-auto px-4 py-6">
-//           <p className="text-center text-sm text-muted-foreground">
-//             Explainable AI Clinical Decision Support System • For Research and Educational Purposes Only
-//           </p>
-//         </div>
-//       </footer>
-//     </div>
-//   );
-// };
-
-// export default Index;
-
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import UploadCard from "../components/UploadCard";
@@ -208,6 +13,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [metrics, setMetrics] = useState(null);
+  const [isLiveMetrics, setIsLiveMetrics] = useState(true);
   const [originalImage, setOriginalImage] = useState(null);
   const [error, setError] = useState(null);
 
@@ -225,17 +31,19 @@ const Index = () => {
           precision: data.precision,
           recall: data.recall,
           auc: data.auc,
-          inference_time: data.inference_time_ms || 127
+          inference_time: data.inference_time_ms || 196.66
         });
+        setIsLiveMetrics(true);
       } catch (err) {
         console.log("Could not fetch model metrics, using fallback:", err.message);
         setMetrics({
-          accuracy: 0.924,
-          precision: 0.918,
-          recall: 0.931,
-          auc: 0.956,
-          inference_time: 127,
+          accuracy: 0.8173076923076923,
+          precision: 0.7738095238095238,
+          recall: 1.0,
+          auc: 0.7564102564102564,
+          inference_time: 196.6580290060777,
         });
+        setIsLiveMetrics(false);
       }
     };
     fetchModelMetrics();
@@ -298,7 +106,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header isLive={isLiveMetrics} />
 
       <main className="container mx-auto px-4 py-8 md:py-12">
         {error && (
@@ -366,7 +174,7 @@ const Index = () => {
 
             {metrics && (
               <div className="max-w-6xl mx-auto">
-                <ModelMetrics metrics={metrics} />
+                <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
               </div>
             )}
           </div>
@@ -405,7 +213,7 @@ const Index = () => {
 
               {metrics && (
                 <div className="md:col-span-2">
-                  <ModelMetrics metrics={metrics} />
+                  <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
                 </div>
               )}
             </div>

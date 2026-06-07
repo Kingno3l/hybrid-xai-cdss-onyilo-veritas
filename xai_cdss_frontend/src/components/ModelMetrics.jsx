@@ -1,7 +1,7 @@
 import React from 'react';
-import { BarChart3, Target, Gauge, Timer, TrendingUp, Activity } from 'lucide-react';
+import { BarChart3, Target, Gauge, Timer, TrendingUp, Activity, CheckCircle, AlertCircle } from 'lucide-react';
 
-const ModelMetrics = ({ metrics }) => {
+const ModelMetrics = ({ metrics, isLive = true }) => {
   const metricItems = [
     { 
       label: 'Accuracy', 
@@ -69,13 +69,29 @@ const ModelMetrics = ({ metrics }) => {
   return (
     <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden animate-slide-up" style={{ animationDelay: '0.2s' }}>
       <div className="p-6 md:p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light">
-            <BarChart3 className="w-5 h-5 text-primary" />
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 border-b border-border/50 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light">
+              <BarChart3 className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Model Performance</h2>
+              <p className="text-sm text-muted-foreground">Evaluation metrics and statistics</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">Model Performance</h2>
-            <p className="text-sm text-muted-foreground">Evaluation metrics and statistics</p>
+
+          <div className="flex-shrink-0">
+            {isLive ? (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 text-xs font-medium">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Live Connection Active</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 text-xs font-medium">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                <span>Offline Evaluation Metrics</span>
+              </div>
+            )}
           </div>
         </div>
 

@@ -84,6 +84,6 @@ for i, img_path in enumerate(test_images):
 
 print("\n=================================")
 if success_count == len(test_images):
-    print(f"🎉 API TEST PASSED: All {success_count}/{len(test_images)} requests returned correct diagnoses and explainability maps!")
+    print(f"SUCCESS: API TEST PASSED: All {success_count}/{len(test_images)} requests returned correct diagnoses and explainability maps!")
 else:
-    print(f"❌ API TEST FAILED: Only {success_count}/{len(test_images)} requests succeeded.")
+    print(f"FAILURE: API TEST FAILED: Only {success_count}/{len(test_images)} requests succeeded.")
