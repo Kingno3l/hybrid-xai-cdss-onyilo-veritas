@@ -122,7 +122,7 @@ const Index = () => {
             <div className="grid lg:grid-cols-12 gap-8 max-w-6xl mx-auto items-stretch">
               
               {/* Left Column: Medical Practitioner Banner & Lab Details */}
-              <div className="lg:col-span-5 flex flex-col justify-between bg-card border border-border rounded-2xl overflow-hidden shadow-lg relative group">
+              <div className="lg:col-span-5 order-2 lg:order-1 flex flex-col justify-between bg-card border border-border rounded-2xl overflow-hidden shadow-lg relative group">
                 {/* Background Image of Black Practitioners */}
                 <div className="relative h-64 lg:h-full min-h-[320px] w-full">
                   <img 
@@ -148,7 +148,7 @@ const Index = () => {
               </div>
 
               {/* Right Column: Title, Upload Card, and CDSS Controls */}
-              <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
+              <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col justify-center space-y-6">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="flex h-3.5 w-3.5 relative">
@@ -186,7 +186,7 @@ const Index = () => {
         {/* VIEW 3: RESULTS (Shown when results exist) */}
         {results && !isLoading && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <button
                 onClick={handleReset}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground transition-colors"
@@ -196,26 +196,26 @@ const Index = () => {
               </button>
             </div>
 
-            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-              {/* The Diagnosis Result Card you shared earlier */}
-              <DiagnosisResult
-                prediction={results.prediction}
-                confidence={results.confidence}
-              />
+            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Diagnosis & Metrics */}
+              <div className="lg:col-span-6 space-y-6">
+                <DiagnosisResult
+                  prediction={results.prediction}
+                  confidence={results.confidence}
+                />
+                {metrics && (
+                  <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
+                )}
+              </div>
 
-              <div className="md:col-span-2">
+              {/* Right Column: Explainability */}
+              <div className="lg:col-span-6">
                 <ExplainabilitySection
                   gradcamImage={results.gradcam_image}
                   featureMaps={results.feature_maps}
                   originalImage={originalImage}
                 />
               </div>
-
-              {metrics && (
-                <div className="md:col-span-2">
-                  <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
-                </div>
-              )}
             </div>
 
             <div className="max-w-4xl mx-auto text-center pt-6">

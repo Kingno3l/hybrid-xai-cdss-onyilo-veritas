@@ -22,9 +22,9 @@ const ExplainabilitySection = ({ gradcamImage, featureMaps, originalImage }) => 
       {/* Grad-CAM Visualization */}
       <div className="bg-card rounded-2xl shadow-card border border-border overflow-hidden">
         <div className="p-6 md:p-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light flex-shrink-0">
                 <Eye className="w-5 h-5 text-primary" />
               </div>
               <div>
@@ -34,7 +34,7 @@ const ExplainabilitySection = ({ gradcamImage, featureMaps, originalImage }) => 
             </div>
             <button
               onClick={() => setShowOriginal(!showOriginal)}
-              className="px-3 py-1.5 rounded-lg bg-muted text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-muted text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors w-full sm:w-auto text-center"
             >
               {showOriginal ? 'Show Heatmap' : 'Show Original'}
             </button>
