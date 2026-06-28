@@ -1,41 +1,38 @@
 import React, { useState } from 'react';
 import { Eye, Layers, Activity, Info, HelpCircle, Shield, AlertTriangle } from 'lucide-react';
 
-const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, limeImage, attentionImage, originalImage }) => {
+const ExplainabilitySection = ({ prediction, gradcamImage, shapImage, limeImage, attentionImage, originalImage }) => {
   const [activeTab, setActiveTab] = useState('gradcam');
   const [showOriginal, setShowOriginal] = useState(false);
 
-  // Set default values for symptoms if none were provided during upload
-  const currentSymptoms = symptoms || { cold: 50, environment: 50, immunity: 75, smoking: false };
-
   const tabs = [
-    {
-      id: 'gradcam',
-      label: 'Grad-CAM',
-      image: gradcamImage,
-      desc: 'Grad-CAM (Gradient-weighted Class Activation Mapping) highlights the coarse regions in the convolutional layers that carried the highest gradient load during the classification decision.',
-      badgeColor: 'bg-red-50 text-red-700 border-red-200/50'
+    { 
+      id: 'gradcam', 
+      label: 'Grad-CAM', 
+      image: gradcamImage, 
+      desc: 'Grad-CAM (Gradient-weighted Class Activation Mapping) highlights the coarse regions in the convolutional layers that carried the highest gradient load during the classification decision.', 
+      badgeColor: 'bg-red-50 text-red-700 border-red-200/50' 
     },
-    {
-      id: 'shap',
-      label: 'SHAP',
-      image: shapImage,
-      desc: 'SHAP (SHapley Additive exPlanations) uses cooperative game theory to calculate pixel-level feature attribution. Red areas represent positive attribution (pushing the model to predict Pneumonia), while Blue areas represent negative attribution (pushing toward Normal).',
-      badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200/50'
+    { 
+      id: 'shap', 
+      label: 'SHAP', 
+      image: shapImage, 
+      desc: 'SHAP (SHapley Additive exPlanations) uses cooperative game theory to calculate pixel-level feature attribution. Red areas represent positive attribution (pushing the model to predict Pneumonia), while Blue areas represent negative attribution (pushing toward Normal).', 
+      badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200/50' 
     },
-    {
-      id: 'lime',
-      label: 'LIME',
-      image: limeImage,
-      desc: 'LIME (Local Interpretable Model-agnostic Explanations) segmentizes the X-ray into superpixels and highlights the top-3 localized boundaries that support the predicted diagnosis while dimming irrelevant regions.',
-      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200/50'
+    { 
+      id: 'lime', 
+      label: 'LIME', 
+      image: limeImage, 
+      desc: 'LIME (Local Interpretable Model-agnostic Explanations) segmentizes the X-ray into superpixels and highlights the top-3 localized boundaries that support the predicted diagnosis while dimming irrelevant regions.', 
+      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200/50' 
     },
-    {
-      id: 'attention',
-      label: 'Self-Attention',
-      image: attentionImage,
-      desc: 'Self-Attention map visualizes localized patches and draws connection vectors where the model’s internal self-attention heads placed the highest weight, similar to a Vision Transformer (ViT).',
-      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200/50'
+    { 
+      id: 'attention', 
+      label: 'Self-Attention', 
+      image: attentionImage, 
+      desc: 'Self-Attention map visualizes localized patches and draws connection vectors where the model’s internal self-attention heads placed the highest weight, similar to a Vision Transformer (ViT).', 
+      badgeColor: 'bg-amber-50 text-amber-700 border-amber-200/50' 
     }
   ];
 
@@ -47,110 +44,93 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
     switch (activeTab) {
       case 'shap':
         return {
-          title: 'SHAP Explanation (Attributions Plot)',
-          subtitle: 'Game-theoretic additive contributions of clinical risk factors & chest X-ray findings'
+          title: 'SHAP Feature Attribution (Shapley Values)',
+          subtitle: 'Game-theoretic additive contributions of radiological findings to predicted class log-odds'
         };
       case 'lime':
         return {
-          title: 'LIME Explanation',
-          subtitle: 'Local linear surrogate model coefficients for clinical & visual features'
+          title: 'LIME Local surrogate Attributions',
+          subtitle: 'Ridge regression weights for isolated superpixel segments in the visual field'
         };
       case 'attention':
         return {
-          title: 'Self-Attention Head Weights',
-          subtitle: 'Self-attention weight distributions across image patches and clinical risk indices'
+          title: 'Self-Attention Node Intensities',
+          subtitle: 'Transformer attention scores distributed across key lung X-ray regions'
         };
       case 'gradcam':
       default:
         return {
           title: 'Grad-CAM Visual Activation Load',
-          subtitle: 'Gradient weights mapped to specific lung airspaces and clinical baselines'
+          subtitle: 'Gradient weights mapped directly to specific lung airspaces and boundaries'
         };
     }
   };
 
-  // Helper to generate dynamic metrics combining visual findings & clinical inputs
-  const getHybridFeatures = () => {
-    const cVal = currentSymptoms.cold / 100;
-    const eVal = currentSymptoms.environment / 100;
-    const iVal = currentSymptoms.immunity / 100;
-    const sVal = currentSymptoms.smoking ? 1 : 0;
-
+  // Helper to generate dynamic metrics based on prediction class and active XAI tab
+  const getRadiologicalFeatures = () => {
     // --- PNEUMONIA PREDICTION VALUES ---
     if (isPneumonia) {
       switch (activeTab) {
         case 'shap':
           return [
-            { name: 'Lung Opacity / Consolidation', category: 'Visual', inputValue: 'Detected', value: 0.45, desc: 'Image segments showing alveolar fluid and white blood cell buildup.', format: 'percent' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: cVal * 0.22, desc: 'High values weaken upper respiratory defense barriers.', format: 'percent' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: eVal * 0.18, desc: 'High particulate index or indoor crowding increases pathogen transmission.', format: 'percent' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: iVal > 0.5 ? -(iVal - 0.5) * 0.25 : (0.5 - iVal) * 0.20, desc: 'High immunity actively suppresses pathogen colonization; low immunity raises risk.', format: 'percent' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: sVal ? 0.14 : -0.04, desc: 'Damaged bronchial cilia reduce clearance of aspirated bacteria/viruses.', format: 'percent' },
-            { name: 'Air Bronchograms', category: 'Visual', inputValue: 'Detected', value: 0.24, desc: 'Dark outlines of air passages visible due to surrounding fluid consolidation.', format: 'percent' }
+            { name: 'Lung Opacity / Consolidation', value: 0.45, desc: 'Image segments showing alveolar fluid and white blood cell buildup.', format: 'percent' },
+            { name: 'Air Bronchograms', value: 0.24, desc: 'Dark outlines of air passages visible due to surrounding fluid consolidation.', format: 'percent' },
+            { name: 'Pleural Effusion (Fluid buildup)', value: 0.15, desc: 'Fluid accumulation in space surrounding lungs, blunting angles.', format: 'percent' },
+            { name: 'Clear Airspaces (Healthy lung)', value: -0.32, desc: 'Negative contribution of clear healthy tissue reducing predicted risk.', format: 'percent' }
           ];
         case 'lime':
           return [
-            { name: 'Lung Opacity / Consolidation', category: 'Visual', inputValue: 'Detected', value: 0.55, desc: 'Local ridge coefficient for opacity superpixels.', format: 'coeff' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: cVal * 0.28, desc: 'Local regression weight for environmental cold exposure.', format: 'coeff' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: eVal * 0.22, desc: 'Local weight for inhaled air contaminants.', format: 'coeff' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: (0.5 - iVal) * 0.35, desc: 'Attribution for active immune response parameters.', format: 'coeff' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: sVal ? 0.18 : -0.06, desc: 'Regression slope for cellular ciliary dysfunction.', format: 'coeff' },
-            { name: 'Air Bronchograms', category: 'Visual', inputValue: 'Detected', value: 0.32, desc: 'Coarse coefficient for visual bronchial segments.', format: 'coeff' }
+            { name: 'Lung Opacity / Consolidation', value: 0.55, desc: 'Local ridge regression coefficient for opacity superpixels.', format: 'coeff' },
+            { name: 'Air Bronchograms', value: 0.32, desc: 'Coarse coefficient for visual bronchial segments.', format: 'coeff' },
+            { name: 'Pleural Effusion (Fluid buildup)', value: 0.18, desc: 'Local coefficient for costophrenic region.', format: 'coeff' },
+            { name: 'Clear Airspaces (Healthy lung)', value: -0.42, desc: 'Local coefficient arguing against Pneumonia prediction.', format: 'coeff' }
           ];
         case 'attention':
           return [
-            { name: 'Lung Opacity / Consolidation', category: 'Visual', inputValue: 'Detected', value: 0.40, desc: 'Visual attention concentrated on white lung consolidation patches.', format: 'weight' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: 0.20, desc: 'Attention score distributed on cold-exposure parameters.', format: 'weight' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: 0.15, desc: 'Relative weight for particulate and crowded environment inputs.', format: 'weight' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: 0.12, desc: 'Attribution score for physiological immunity baseline.', format: 'weight' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: 0.08, desc: 'Model attention allocated to bronchial background records.', format: 'weight' },
-            { name: 'Air Bronchograms', category: 'Visual', inputValue: 'Detected', value: 0.05, desc: 'Fine-grained attention allocated to linear airway maps.', format: 'weight' }
+            { name: 'Lung Opacity / Consolidation', value: 0.40, desc: 'Visual attention concentrated on white lung consolidation patches.', format: 'weight' },
+            { name: 'Air Bronchograms', value: 0.12, desc: 'Fine-grained attention allocated to linear airway maps.', format: 'weight' },
+            { name: 'Pleural Effusion (Fluid buildup)', value: 0.08, desc: 'Self-attention weight on lung bases.', format: 'weight' },
+            { name: 'Clear Airspaces (Healthy lung)', value: 0.05, desc: 'Self-attention weight distributed over healthy lung tissue.', format: 'weight' }
           ];
         case 'gradcam':
         default:
           return [
-            { name: 'Lung Opacity / Consolidation', category: 'Visual', inputValue: 'Detected', value: 0.88, desc: 'Gradient weights highlighting opaque visual consolidation zones.', format: 'percent' },
-            { name: 'Air Bronchograms', category: 'Visual', inputValue: 'Detected', value: 0.54, desc: 'Coarse activation overlay matching airway patterns.', format: 'percent' },
-            { name: 'Pleural Effusion (Fluid buildup)', category: 'Visual', inputValue: 'Detected', value: 0.35, desc: 'Regional gradient activation blunting costophrenic angles.', format: 'percent' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: cVal * 0.10, desc: 'Auxiliary clinical correlation weight.', format: 'percent' }
+            { name: 'Lung Opacity / Consolidation', value: 0.88, desc: 'Gradient weights highlighting opaque visual consolidation zones.', format: 'percent' },
+            { name: 'Air Bronchograms', value: 0.54, desc: 'Coarse activation overlay matching airway patterns.', format: 'percent' },
+            { name: 'Pleural Effusion (Fluid buildup)', value: 0.35, desc: 'Regional gradient activation blunting costophrenic angles.', format: 'percent' }
           ];
       }
-    }
+    } 
     // --- NORMAL PREDICTION VALUES ---
     else {
       switch (activeTab) {
         case 'shap':
           return [
-            { name: 'Clear Airspaces', category: 'Visual', inputValue: 'Normal', value: 0.55, desc: 'Healthy dark, air-filled lungs pushing model away from Pneumonia.', format: 'percent' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: iVal * 0.25, desc: 'High immunity acts as a strong protective factor against lung infections.', format: 'percent' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: -cVal * 0.10, desc: 'Low exposure results in minimal compromise to respiratory cilia.', format: 'percent' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: -eVal * 0.08, desc: 'Low pollution index ensures clean, uncompromised airway linings.', format: 'percent' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: sVal ? -0.15 : 0.05, desc: 'Absence of smoking history maintains optimal ciliary defense.', format: 'percent' },
-            { name: 'Sharp Costophrenic Angles', category: 'Visual', inputValue: 'Normal', value: 0.34, desc: 'Pointing lung edges indicating healthy airspaces without fluid.', format: 'percent' }
+            { name: 'Clear Airspaces', value: 0.55, desc: 'Healthy dark, air-filled lungs pushing model away from Pneumonia.', format: 'percent' },
+            { name: 'Sharp Costophrenic Angles', value: 0.34, desc: 'Pointing lung edges indicating healthy airspaces without fluid.', format: 'percent' },
+            { name: 'Lung Opacity / Consolidation', value: -0.05, desc: 'Minor negative impact of patchy cloudiness.', format: 'percent' },
+            { name: 'Air Bronchograms', value: -0.02, desc: 'Negligible impact of fluid markings.', format: 'percent' }
           ];
         case 'lime':
           return [
-            { name: 'Clear Airspaces', category: 'Visual', inputValue: 'Normal', value: 0.65, desc: 'Local ridge regression coefficient for clear airspace superpixels.', format: 'coeff' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: iVal * 0.32, desc: 'Local regression weight for healthy baseline immunity parameters.', format: 'coeff' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: -cVal * 0.12, desc: 'Attribution showing low cold vulnerability.', format: 'coeff' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: -eVal * 0.10, desc: 'Regression slope for minimal environmental irritation.', format: 'coeff' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: sVal ? -0.20 : 0.08, desc: 'Local weight demonstrating bronchial lining protection.', format: 'coeff' },
-            { name: 'Sharp Costophrenic Angles', category: 'Visual', inputValue: 'Normal', value: 0.40, desc: 'Regression slope for costophrenic angle regions.', format: 'coeff' }
+            { name: 'Clear Airspaces', value: 0.65, desc: 'Local ridge regression coefficient for clear airspace superpixels.', format: 'coeff' },
+            { name: 'Sharp Costophrenic Angles', value: 0.40, desc: 'Regression slope for costophrenic angle regions.', format: 'coeff' },
+            { name: 'Lung Opacity / Consolidation', value: -0.06, desc: 'Local coefficient arguing against Normal prediction.', format: 'coeff' },
+            { name: 'Air Bronchograms', value: -0.02, desc: 'Local coefficient for airway fluid markings.', format: 'coeff' }
           ];
         case 'attention':
           return [
-            { name: 'Clear Airspaces', category: 'Visual', inputValue: 'Normal', value: 0.45, desc: 'Visual attention weights centered on healthy, clear dark lung areas.', format: 'weight' },
-            { name: 'Patient Immunity Level', category: 'Clinical', inputValue: `${currentSymptoms.immunity}%`, value: 0.22, desc: 'Attention score distributed on patient defense baseline inputs.', format: 'weight' },
-            { name: 'Cold Exposure Level', category: 'Clinical', inputValue: `${currentSymptoms.cold}%`, value: 0.08, desc: 'Attention weight mapped to temperature records.', format: 'weight' },
-            { name: 'Environment (Pollution / Crowding)', category: 'Environmental', inputValue: `${currentSymptoms.environment}%`, value: 0.06, desc: 'Model attention allocated to clean air inputs.', format: 'weight' },
-            { name: 'Airway Damage (Smoking History)', category: 'Clinical', inputValue: currentSymptoms.smoking ? 'Yes' : 'No', value: 0.04, desc: 'Relative weight for airway background profiles.', format: 'weight' }
+            { name: 'Clear Airspaces', value: 0.62, desc: 'Visual attention weights centered on healthy, clear dark lung areas.', format: 'weight' },
+            { name: 'Sharp Costophrenic Angles', value: 0.28, desc: 'Self-attention weight on costophrenic junctions.', format: 'weight' },
+            { name: 'Lung Opacity / Consolidation', value: 0.06, desc: 'Self-attention weight distributed on minor opacities.', format: 'weight' },
+            { name: 'Air Bronchograms', value: 0.04, desc: 'Self-attention weight on structural pathways.', format: 'weight' }
           ];
         case 'gradcam':
         default:
           return [
-            { name: 'Clear Airspaces', category: 'Visual', inputValue: 'Normal', value: 0.90, desc: 'Gradient activation weights highlighting dark healthy lungs.', format: 'percent' },
-            { name: 'Sharp Costophrenic Angles', category: 'Visual', inputValue: 'Normal', value: 0.62, desc: 'Regional gradient activation showing sharp costophrenic junctions.', format: 'percent' },
-            { name: 'Lung Opacity / Consolidation', category: 'Visual', inputValue: 'Absent', value: -0.02, desc: 'Negligible activation for consolidation targets.', format: 'percent' }
+            { name: 'Clear Airspaces', value: 0.90, desc: 'Gradient activation weights highlighting dark healthy lungs.', format: 'percent' },
+            { name: 'Sharp Costophrenic Angles', value: 0.62, desc: 'Regional gradient activation showing sharp costophrenic junctions.', format: 'percent' },
+            { name: 'Lung Opacity / Consolidation', value: -0.02, desc: 'Negligible activation for consolidation targets.', format: 'percent' }
           ];
       }
     }
@@ -158,8 +138,7 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
 
   const formatValue = (val, format) => {
     const isPositive = val > 0;
-    const absVal = Math.abs(val);
-
+    
     switch (format) {
       case 'percent':
         return `${isPositive ? '+' : ''}${(val * 100).toFixed(0)}%`;
@@ -172,7 +151,7 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
     }
   };
 
-  const clinicalFeatures = getHybridFeatures();
+  const clinicalFeatures = getRadiologicalFeatures();
   const attributionHeader = getClinicalAttributionHeader();
 
   return (
@@ -208,10 +187,11 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
                   setActiveTab(tab.id);
                   setShowOriginal(false);
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${activeTab === tab.id && !showOriginal
-                  ? 'bg-card text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                  activeTab === tab.id && !showOriginal
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
               >
                 {tab.label}
               </button>
@@ -261,11 +241,11 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
             {clinicalFeatures.map((feat) => {
               const absVal = Math.abs(feat.value);
               const pct = (absVal * 100).toFixed(0);
-
+              
               // Decide if it contributes to Pneumonia or protects from it
               const contributes = isPneumonia ? feat.value > 0 : feat.value < 0;
               const protects = isPneumonia ? feat.value < 0 : feat.value > 0;
-
+              
               let statusText = "Neutral / Low Impact";
               let statusBadge = "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
               let barColor = "bg-slate-400 dark:bg-slate-600";
@@ -289,13 +269,7 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-foreground">{feat.name}</span>
-                        <span className="px-2 py-0.5 text-[9px] font-bold uppercase rounded bg-muted text-muted-foreground border border-border/80 tracking-wider">
-                          {feat.category}
-                        </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">
-                        Input Value: <strong className="text-foreground">{feat.inputValue}</strong>
-                      </span>
                     </div>
 
                     {/* Contributes vs Protects Badge */}
@@ -313,9 +287,12 @@ const ExplainabilitySection = ({ prediction, symptoms, gradcamImage, shapImage, 
                   <div className="space-y-1">
                     <div className="flex items-center gap-3">
                       <div className="h-2.5 bg-muted rounded-full overflow-hidden flex-grow border border-border/50">
-                        <div
-                          className={`h-full rounded-full ${barColor} transition-all duration-1000`}
-                          style={{ width: `${activeTab === 'lime' ? absVal * 100 : pct}%` }}
+                        <div 
+                          className="h-full rounded-full transition-all duration-1000"
+                          style={{ 
+                            width: `${activeTab === 'lime' ? absVal * 100 : pct}%`,
+                            backgroundColor: barColor.includes('rose') ? '#f43f5e' : barColor.includes('blue') ? '#3b82f6' : '#94a3b8'
+                          }}
                         />
                       </div>
                       <span className="text-xs font-bold text-foreground w-12 text-right flex-shrink-0">

@@ -191,10 +191,6 @@ const UploadCard = ({ onAnalyze, isLoading }) => {
   const [preview, setPreview] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState(null);
-  const [cold, setCold] = useState(50);
-  const [environment, setEnvironment] = useState(50);
-  const [immunity, setImmunity] = useState(75);
-  const [smoking, setSmoking] = useState(false);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -242,16 +238,12 @@ const UploadCard = ({ onAnalyze, isLoading }) => {
     setFile(null);
     setPreview(null);
     setError(null);
-    setCold(50);
-    setEnvironment(50);
-    setImmunity(75);
-    setSmoking(false);
   };
 
   // This passes the file up to Index.jsx
   const handleSubmit = () => {
     if (file) {
-      onAnalyze(file, { cold, environment, immunity, smoking });
+      onAnalyze(file);
     }
   };
 
@@ -318,102 +310,20 @@ const UploadCard = ({ onAnalyze, isLoading }) => {
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="relative rounded-xl overflow-hidden bg-muted">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-full h-64 md:h-80 object-contain bg-foreground/5"
-                />
-                {!isLoading && (
-                  <button
-                    onClick={handleRemove}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-card/90 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-danger hover:border-danger hover:text-danger-foreground transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Symptom Sliders for Hybrid CDSS */}
-              <div className="p-5 rounded-xl border border-border/80 bg-muted/30 space-y-4">
-                <div className="flex items-center gap-2 border-b border-border pb-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
-                    Hybrid clinical symptoms & environment inputs
-                  </h3>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Cold Exposure Slider */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-muted-foreground">Cold Exposure</span>
-                      <span className="text-foreground">{cold}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={cold}
-                      onChange={(e) => setCold(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-muted-foreground/20 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Exposure to low temperatures or seasonal chills.</p>
-                  </div>
-
-                  {/* Environmental Quality Slider */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-muted-foreground">Environment (Pollution / Air Index)</span>
-                      <span className="text-foreground">{environment}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={environment}
-                      onChange={(e) => setEnvironment(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-muted-foreground/20 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Air particulate levels, indoor ventilation quality.</p>
-                  </div>
-
-                  {/* Patient Immunity Level Slider */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-muted-foreground">Patient Immunity Level</span>
-                      <span className="text-foreground">{immunity}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={immunity}
-                      onChange={(e) => setImmunity(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-muted-foreground/20 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    />
-                    <p className="text-[10px] text-muted-foreground">Body immune defense capability (vaccines, health baseline).</p>
-                  </div>
-
-                  {/* Smoking Checkbox */}
-                  <div className="flex flex-col justify-center space-y-1">
-                    <div className="flex items-center gap-3 pt-2">
-                      <input
-                        type="checkbox"
-                        id="smoking"
-                        checked={smoking}
-                        onChange={(e) => setSmoking(e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                      />
-                      <label htmlFor="smoking" className="text-xs font-semibold text-muted-foreground cursor-pointer select-none">
-                        Patient has History of Smoking
-                      </label>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground pt-1">Checks for compromised airway cilia and defenses.</p>
-                  </div>
-                </div>
-              </div>
+            <div className="relative rounded-xl overflow-hidden bg-muted">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-64 md:h-80 object-contain bg-foreground/5"
+              />
+              {!isLoading && (
+                <button
+                  onClick={handleRemove}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-card/90 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-danger hover:border-danger hover:text-danger-foreground transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
           )}
 
