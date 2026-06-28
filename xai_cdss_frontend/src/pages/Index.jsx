@@ -5,9 +5,10 @@ import LoadingState from "../components/LoadingState";
 import DiagnosisResult from "../components/DiagnosisResult";
 import ExplainabilitySection from "../components/ExplainabilitySection";
 import ModelMetrics from "../components/ModelMetrics";
+import SessionStats from "../components/SessionStats";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 
-const API_BASE_URL = "https://kingno3l-hybrid-xai-cdss-backend.hf.space";
+const API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://127.0.0.1:8000" : "https://kingno3l-hybrid-xai-cdss-backend.hf.space";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,23 @@ const Index = () => {
   const [isLiveMetrics, setIsLiveMetrics] = useState(true);
   const [originalImage, setOriginalImage] = useState(null);
   const [error, setError] = useState(null);
+  const [sessionStats, setSessionStats] = useState({
+    total: 0,
+    normal: 0,
+    pneumonia: 0,
+    lastLatency: null,
+    latencyHistory: [],
+  });
+
+  const handleResetStats = () => {
+    setSessionStats({
+      total: 0,
+      normal: 0,
+      pneumonia: 0,
+      lastLatency: null,
+      latencyHistory: [],
+    });
+  };
 
   // Fetch actual metrics from the backend with a fallback if the backend is offline
   useEffect(() => {
@@ -58,6 +76,8 @@ const Index = () => {
     reader.onload = () => setOriginalImage(reader.result);
     reader.readAsDataURL(file);
 
+    const startTime = performance.now();
+
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -73,13 +93,16 @@ const Index = () => {
       }
 
       const data = await response.json();
-      console.log("API Data:", data); // Check console to see raw data
+      const endTime = performance.now();
+      const latency = endTime - startTime;
+      console.log("API Data:", data, "Latency:", latency); // Check console to see raw data
 
       // 3. Map API data to your App's state format
       // We must add "data:image/png;base64," to the image string so it displays
       const formattedResults = {
         prediction: data.prediction,
         confidence: data.confidence,
+        latency: latency,
         gradcam_image: data.explainability?.gradcam_overlay
           ? `data:image/png;base64,${data.explainability.gradcam_overlay}`
           : null,
@@ -88,7 +111,19 @@ const Index = () => {
           : [],
       };
 
-      // 4. Setting this state triggers the view to switch
+      // 4. Update session statistics
+      setSessionStats(prev => {
+        const isPneumonia = data.prediction?.toLowerCase() === 'pneumonia';
+        return {
+          total: prev.total + 1,
+          normal: prev.normal + (!isPneumonia ? 1 : 0),
+          pneumonia: prev.pneumonia + (isPneumonia ? 1 : 0),
+          lastLatency: latency,
+          latencyHistory: [...prev.latencyHistory, latency]
+        };
+      });
+
+      // 5. Setting this state triggers the view to switch
       setResults(formattedResults);
     } catch (err) {
       console.error("Prediction error:", err);
@@ -177,6 +212,12 @@ const Index = () => {
                 <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
               </div>
             )}
+
+            {sessionStats.total > 0 && (
+              <div className="max-w-6xl mx-auto">
+                <SessionStats stats={sessionStats} onResetStats={handleResetStats} />
+              </div>
+            )}
           </div>
         )}
 
@@ -202,9 +243,13 @@ const Index = () => {
                 <DiagnosisResult
                   prediction={results.prediction}
                   confidence={results.confidence}
+                  latency={results.latency}
                 />
                 {metrics && (
                   <ModelMetrics metrics={metrics} isLive={isLiveMetrics} />
+                )}
+                {sessionStats.total > 0 && (
+                  <SessionStats stats={sessionStats} onResetStats={handleResetStats} />
                 )}
               </div>
 

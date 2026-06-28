@@ -1,7 +1,7 @@
 import React from 'react';
-import { CheckCircle, AlertTriangle, TrendingUp, Shield } from 'lucide-react';
+import { CheckCircle, AlertTriangle, TrendingUp, Shield, Zap } from 'lucide-react';
 
-const DiagnosisResult = ({ prediction, confidence }) => {
+const DiagnosisResult = ({ prediction, confidence, latency }) => {
   const isPneumonia = prediction?.toLowerCase() === 'pneumonia';
   
   return (
@@ -15,6 +15,14 @@ const DiagnosisResult = ({ prediction, confidence }) => {
             <h2 className="text-lg font-semibold text-foreground">Diagnosis Result</h2>
             <p className="text-sm text-muted-foreground">AI-powered analysis output</p>
           </div>
+          {latency && (
+            <div className="ml-auto">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 text-xs font-semibold shadow-sm animate-pulse">
+                <Zap className="w-3.5 h-3.5 fill-indigo-600/10" />
+                <span>Live Latency: {latency.toFixed(0)}ms</span>
+              </span>
+            </div>
+          )}
         </div>
 
         <div className={`p-6 rounded-xl border-2 ${
