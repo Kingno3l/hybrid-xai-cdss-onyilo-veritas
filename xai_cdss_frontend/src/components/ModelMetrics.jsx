@@ -1,7 +1,7 @@
 import React from 'react';
 import { BarChart3, Target, Gauge, Timer, TrendingUp, Activity, CheckCircle, AlertCircle } from 'lucide-react';
 
-const ModelMetrics = ({ metrics, isLive = true }) => {
+const ModelMetrics = ({ metrics, isLive = true, hasSessionData = false, viewMode = 'benchmark', onViewModeChange }) => {
   const metricItems = [
     { 
       label: 'Accuracy', 
@@ -80,18 +80,50 @@ const ModelMetrics = ({ metrics, isLive = true }) => {
             </div>
           </div>
 
-          <div className="flex-shrink-0">
-            {isLive ? (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 text-xs font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Live Connection Active</span>
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 text-xs font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                <span>Offline Evaluation Metrics</span>
+          <div className="flex items-center gap-3 flex-wrap ml-auto md:ml-0">
+            {hasSessionData && (
+              <div className="flex items-center bg-muted p-1 rounded-xl border border-border">
+                <button
+                  onClick={() => onViewModeChange('session')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    viewMode === 'session'
+                      ? 'bg-card text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Session (Dynamic)
+                </button>
+                <button
+                  onClick={() => onViewModeChange('benchmark')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    viewMode === 'benchmark'
+                      ? 'bg-card text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Benchmark (Static)
+                </button>
               </div>
             )}
+
+            <div className="flex-shrink-0">
+              {viewMode === 'session' ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 text-xs font-semibold">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                  <span>Session Dynamics</span>
+                </div>
+              ) : isLive ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 text-xs font-medium">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Live Connection Active</span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 text-xs font-medium">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  <span>Offline Evaluation Metrics</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -133,8 +165,9 @@ const ModelMetrics = ({ metrics, isLive = true }) => {
 
         <div className="mt-6 p-4 rounded-xl bg-accent/50 border border-accent">
           <p className="text-sm text-accent-foreground">
-            <strong>Model Info:</strong> These metrics were computed on a held-out test set. 
-            The model uses a convolutional neural network architecture optimized for chest X-ray analysis.
+            <strong>Model Info:</strong> {viewMode === 'session' 
+              ? "These metrics are calculated dynamically based on the active session's analyzed scans and your specified Ground Truth labels in the history table below."
+              : "These metrics were computed on a held-out test set. The model uses a convolutional neural network architecture optimized for chest X-ray analysis."}
           </p>
         </div>
       </div>

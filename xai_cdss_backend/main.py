@@ -6,7 +6,7 @@ import torch
 import torchvision.transforms as transforms
 
 from model import DenseNet121Binary
-from explainability import generate_gradcam_overlay, generate_intrinsic_maps
+from explainability import generate_gradcam_overlay, generate_shap_overlay, generate_lime_overlay, generate_attention_overlay
 
 # -------------------
 # Model setup
@@ -38,7 +38,9 @@ METRICS_FILE = os.path.join(os.path.dirname(__file__), "metrics.json")
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
 ])
 
 # -------------------
@@ -76,25 +78,26 @@ async def predict_xray(file: UploadFile = File(...)):
         confidence = p_normal
         pred_idx = 0
 
-    # Generate real Grad-CAM and Intrinsic Feature Maps
-    gradcam_overlay = generate_gradcam_overlay(
+    # Generate real Grad-CAM, SHAP, LIME, and Self-Attention Maps
+    gradcam_overlay, heatmap = generate_gradcam_overlay(
         model=model,
         image=image,
         input_tensor=input_tensor[0],
         target_class=pred_idx
     )
     
-    intrinsic_maps = generate_intrinsic_maps(
-        model=model,
-        input_tensor=input_tensor[0]
-    )
+    shap_overlay = generate_shap_overlay(image, heatmap)
+    lime_overlay = generate_lime_overlay(image, heatmap)
+    attention_overlay = generate_attention_overlay(image, heatmap)
 
     return {
         "prediction": label,
         "confidence": confidence,
         "explainability": {
             "gradcam_overlay": gradcam_overlay,
-            "intrinsic_maps": intrinsic_maps
+            "shap_overlay": shap_overlay,
+            "lime_overlay": lime_overlay,
+            "attention_overlay": attention_overlay
         },
         "ethics": {
             "disclaimer": "This system is intended to support clinical decision-making only and must not be used as a standalone diagnostic tool.",
