@@ -12,7 +12,7 @@ const Header = ({ isLive = true }) => {
             </div>
             <div>
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground tracking-tight">
-                Explainable AI Clinical Decision Support System
+                Explainable AI Clinical Decision Support System.
               </h1>
               <p className="text-xs sm:text-sm md:text-base text-muted-foreground flex items-center gap-1.5 mt-0.5 md:mt-1">
                 <Activity className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />

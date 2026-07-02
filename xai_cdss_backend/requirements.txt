@@ -1,12 +1,12 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 fastapi
 uvicorn
-torch==2.1.2+cpu
-torchvision==0.16.2+cpu
+torch
+torchvision
 pillow
 opencv-python-headless==4.8.0.76
 matplotlib
-numpy
+numpy==1.26.4
 captum
 python-multipart
 scikit-learn
