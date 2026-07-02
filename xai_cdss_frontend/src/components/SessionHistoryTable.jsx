@@ -14,7 +14,6 @@ const SessionHistoryTable = ({ runs, onUpdateGroundTruth, onDeleteRun, onClearAl
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">Session Scan History</h2>
-              <p className="text-sm text-muted-foreground">Adjust ground truth to see dynamic metrics update instantly</p>
             </div>
           </div>
 

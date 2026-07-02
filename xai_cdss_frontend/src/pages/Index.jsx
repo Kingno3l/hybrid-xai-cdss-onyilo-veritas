@@ -292,9 +292,6 @@ const Index = () => {
                     <h3 className="text-xl font-bold tracking-tight text-white mb-2">
                       Onyilo Veritas Diagnostics Lab
                     </h3>
-                    <p className="text-sm text-slate-200 leading-relaxed">
-                      Assisting radiologists and clinicians with deep learning analysis for rapid diagnosis of thoracic pathology.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -316,7 +313,7 @@ const Index = () => {
                     Chest Radiography Interpretation Engine
                   </h2>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-                    Upload a high-resolution Chest X-ray scan. The system will automatically diagnose pathological patterns and display visual Grad-CAM overlays to support diagnostic decisions.
+                    Upload a high-resolution Chest X-ray scan.
                   </p>
                 </div>
 
@@ -396,6 +393,7 @@ const Index = () => {
               <div className="lg:col-span-6">
                 <ExplainabilitySection
                   prediction={results.prediction}
+                  confidence={results.confidence}
                   symptoms={results.symptoms}
                   gradcamImage={results.gradcam_image}
                   shapImage={results.shap_image}

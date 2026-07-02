@@ -3,8 +3,10 @@ node_modules/
 xai_cdss_frontend/node_modules/
 
 # Python Virtual Environments & Cache
+.venv/
 venv/
 venv_mac/
+xai_cdss_backend/.venv/
 xai_cdss_backend/venv_mac/
 __pycache__/
 *.pyc

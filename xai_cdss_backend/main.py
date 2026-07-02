@@ -78,7 +78,7 @@ async def predict_xray(file: UploadFile = File(...)):
         confidence = p_normal
         pred_idx = 0
 
-    # Generate real Grad-CAM, SHAP, LIME, and Self-Attention Maps
+    # Generate real Grad-CAM, SHAP, LIME, and Attention Mechanism Maps
     gradcam_overlay, heatmap = generate_gradcam_overlay(
         model=model,
         image=image,

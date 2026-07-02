@@ -162,9 +162,9 @@ def generate_lime_overlay(image, heatmap):
 
 def generate_attention_overlay(image, heatmap):
     """
-    Generates a self-attention saliency map.
+    Generates an attention mechanism saliency map.
     Renders glowing connection dots (gold for primary attention, cyan for secondary),
-    simulating Vision Transformer (ViT) self-attention heads.
+    simulating Vision Transformer (ViT) attention mechanism heads.
     """
     image_np = np.array(image).copy()
     h, w, c = image_np.shape
